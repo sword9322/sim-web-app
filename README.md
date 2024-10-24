@@ -35,25 +35,25 @@ npm install
 
 ### 3. Set Up the Backend
 
-        1. **Move PHP Files**: Copy the PHP files from `src/api` to your local server's document root (e.g., `htdocs` for XAMPP or MAMP).
+1. **Move PHP Files**: Copy the PHP files from `src/api` to your local server's document root (e.g., `htdocs` for XAMPP or MAMP).
 
-        2. **Create Database and Table**:
-        - Create a MySQL database named `webapp`.
-        - Run the following SQL command to create the `users` table:
+2. **Create Database and Table**:
+- Create a MySQL database named `webapp`.
+- Run the following SQL command to create the `users` table:
 
-        ```sql
-        CREATE TABLE users (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL UNIQUE,
-            password VARCHAR(255) NOT NULL,
-            role VARCHAR(50) NOT NULL,
-            address VARCHAR(255) NOT NULL,
-            city VARCHAR(100) NOT NULL,
-            date_of_birth DATE NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-        ```
+```sql
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
 ### 4. Update Fetch URLs
 
