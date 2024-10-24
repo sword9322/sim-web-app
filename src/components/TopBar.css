@@ -1,0 +1,31 @@
+.top-bar {
+    background-color: #34495e; /* Darker blue background */
+    color: #ecf0f1; /* Light text color */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it stays above other elements */
+  }
+
+  .top-bar h1 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+
+  .hamburger {
+    cursor: pointer;
+    font-size: 1.2em;
+    background: none;
+    border: none;
+    color: #ecf0f1;
+    transition: color 0.3s;
+  }
+  
+  .hamburger:hover {
+    color: #3498db; /* Light blue on hover */
+  }

@@ -1,0 +1,53 @@
+.user-table {
+    padding: 20px;
+    margin-top: 50px; /* Adjust for sidebar width */
+    background-color: #f5f5f5; /* Light background for contrast */
+    min-height: calc(100vh - 60px); /* Full height minus top bar */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+}
+
+.manage-users h1 {
+    color: #34495e; /* Match top bar color */
+    text-align: center; /* Center text within the h1 */
+    margin-top: 60px;
+    font-size: 50px;
+}
+
+.user-table h4 {
+    color: #34495e; /* Match top bar color */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.datatable {
+    width: 100%;
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+}
+
+
+.p-buttonset {
+    display: flex;
+    justify-content: space-around;
+}
+
+.p-button-info, .p-button-warning, .p-button-danger {
+    margin: 0 5px;
+    transition: background-color 0.3s;
+}
+
+.p-button-info:hover {
+    background-color: #3498db; /* Light blue on hover */
+}
+
+.p-button-warning:hover {
+    background-color: #f39c12; /* Orange on hover */
+}
+
+.p-button-danger:hover {
+    background-color: #e74c3c; /* Red on hover */
+}
+
+.p-button-info, .p-button-warning, .p-button-danger {
+    color: #ecf0f1; /* Light text color */
+}

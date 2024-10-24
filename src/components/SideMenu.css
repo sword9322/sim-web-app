@@ -1,0 +1,64 @@
+.side-menu {
+    background-color: #34495e; /* Slightly lighter dark blue */
+    color: #ecf0f1; /* Light text color */
+    width: 300px; /* Increased width */
+    height: 100vh; /* Full viewport height */
+    padding: 30px 20px; /* More padding for better spacing */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+    position: fixed; /* Fixed position on the left */
+    top: 0;
+    left: 0;
+    overflow-y: auto; /* Scrollable if content overflows */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+}
+
+.side-menu h1 {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.side-menu ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    margin-top:30px;
+}
+
+.dashboard-menu-item{
+    margin-top: 150px;
+}
+
+.side-menu li {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.active {
+    font-weight: bold;
+    color: #3498db;
+}
+
+.side-menu a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 1.2em;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    width: 100%;
+    justify-content: center; /* Center text and icon */
+}
+
+.side-menu a:hover {
+    color: #3498db; /* Light blue on hover */
+    background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover */
+}
+
+.icon {
+    margin-right: 10px;
+}

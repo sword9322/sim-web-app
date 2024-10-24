@@ -1,24 +1,40 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import './App.css';
+import TopBar from './components/TopBar';
+import SideMenu from './components/SideMenu';
+import Content from './components/Content';
+import Dashboard from './components/Dashboard'
+import About from './components/About'
+import MyProfile from './components/MyProfile'
+import UserForm from './components/UserForm'
+import UserTable from './components/UserTable';
 
 function App() {
+  const [menuVisible, setMenuVisible] = useState(true);
+
+  const toggleSideMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className='root'>
+        <TopBar onToggleMenu={toggleSideMenu}></TopBar>
+        <div className='container'>
+          {menuVisible && <SideMenu/>}
+          <Content isFullSize={!menuVisible}>
+            <Routes>
+              <Route path='/' element={<Dashboard/>}/>
+              <Route path='/about' element={<About/>}/>
+              <Route path='/myprofile' element={<MyProfile/>}/>
+              <Route path='/userForm' element={<UserForm/>}/>
+              <Route path='/userTable' element={<UserTable/>}/>
+            </Routes>
+          </Content>
+        </div>
+      </div>
+    </Router>
   );
 }
 
