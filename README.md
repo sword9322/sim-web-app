@@ -1,70 +1,104 @@
-# Getting Started with Create React App
+# Project Setup Guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This guide will help you set up and run the project on your local machine. Follow the steps below to get started.
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+- **Node.js**: Ensure you have Node.js installed. You can download it from [nodejs.org](https://nodejs.org/).
+- **PHP**: Make sure PHP is installed on your system. You can use a local server environment like XAMPP or MAMP.
+- **MySQL**: Ensure you have MySQL installed and running.
 
-### `yarn start`
+## Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Frontend**: The React application is located in the `src/components` directory.
+- **Backend**: PHP files are located in the `src/api` directory.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Setup Instructions
 
-### `yarn test`
+### 1. Clone the Repository
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Clone the repository to your local machine using the following command:
 
-### `yarn build`
+```bash
+git clone <repository-url>
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. Install Frontend Dependencies
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Navigate to the project directory and install the necessary dependencies:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+cd <project-directory>
+npm install
+```
 
-### `yarn eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 3. Set Up the Backend
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+        1. **Move PHP Files**: Copy the PHP files from `src/api` to your local server's document root (e.g., `htdocs` for XAMPP or MAMP).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+        2. **Create Database and Table**:
+        - Create a MySQL database named `webapp`.
+        - Run the following SQL command to create the `users` table:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+        ```sql
+        CREATE TABLE users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL,
+            role VARCHAR(50) NOT NULL,
+            address VARCHAR(255) NOT NULL,
+            city VARCHAR(100) NOT NULL,
+            date_of_birth DATE NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        ```
 
-## Learn More
+### 4. Update Fetch URLs
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Ensure that the fetch URLs in the React components point to the correct local server address. For example, if using XAMPP, the URL should be `http://localhost/api/saveUser.php`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 5. Run the Application
 
-### Code Splitting
+1. **Start the Local Server**: Ensure your local server (e.g., XAMPP or MAMP) is running.
+2. **Run the React Application**: Start the React development server:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm start
+```
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 6. Access the Application
 
-### Making a Progressive Web App
+Open your browser and navigate to `http://localhost:3000` to access the application.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Troubleshooting
 
-### Advanced Configuration
+- **CORS Issues**: Ensure that the PHP files include the necessary CORS headers. For example, in `saveUser.php`:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```php
+header("Access-Control-Allow-Origin: ");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+```
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **Database Connection**: Verify that the database credentials in the PHP files match your local MySQL setup.
 
-### `yarn build` fails to minify
+## Relevant Code Snippets
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **UserForm Component**: Handles user form submission and data fetching.
+  ```javascript:src/components/UserForm.js
+  startLine: 6
+  endLine: 62
+  ```
+
+- **saveUser.php**: PHP script for saving user data.
+  ```php:src/api/saveUser.php
+  startLine: 1
+  endLine: 54
+  ```
+
+This setup should allow you to run the application locally and test its functionality.
+Feel free to reach out if you encounter any issues or have questions!
