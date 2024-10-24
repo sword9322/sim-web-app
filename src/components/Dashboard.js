@@ -11,7 +11,7 @@ function Dashboard() {
     ];
 
     useEffect(() => {
-        fetch('http://localhost:8888/getTotalUsers.php')
+        fetch('http://localhost:8888/api/getTotalUsers.php')
             .then(response => response.json())
             .then(data => {
                 if (data.success) {

@@ -8,7 +8,7 @@ function MyProfile() {
 
     useEffect(() => {
         // Fetch user data from the backend
-        fetch('http://localhost:8888/getUser.php') // Adjust the URL to your endpoint
+        fetch('http://localhost:8888/api/getUser.php') // Adjust the URL to your endpoint
             .then(response => response.json())
             .then(data => setUser(data))
             .catch(error => console.error('Error fetching user data:', error));
@@ -25,7 +25,7 @@ function MyProfile() {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Send updated user data to the backend
-        fetch('http://localhost:8888/updateUser.php', { // Adjust the URL to your endpoint
+        fetch('http://localhost:8888/api/updateUser.php', { // Adjust the URL to your endpoint
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

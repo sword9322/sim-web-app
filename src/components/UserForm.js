@@ -35,7 +35,7 @@ function UserForm() {
         }
 
         try {
-            const response = await fetch('http://localhost:8888/saveUser.php', {
+            const response = await fetch('http://localhost:8888/api/saveUser.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -22,7 +22,7 @@ const UserTable = () => {
 
     useEffect(() => {
         // Fetch users from the backend
-        fetch('http://localhost:8888/getUsers.php') // Adjust the URL to your endpoint
+        fetch('http://localhost:8888/api/getUsers.php') // Adjust the URL to your endpoint
             .then(response => response.json())
             .then(data => {
                 console.log(data); // Debug: Check if 'role' is present in the data
@@ -54,7 +54,7 @@ const UserTable = () => {
     const deleteHandler = (user) => {
         // Delete user from the backend
         console.log('Delete ID:', user.id);
-        fetch('http://localhost:8888/deleteUser.php', { // Adjust the URL to your endpoint
+        fetch('http://localhost:8888/api/deleteUser.php', { // Adjust the URL to your endpoint
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
