@@ -5,7 +5,6 @@ import { Button } from 'primereact/button';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import CustomAlert from './CustomAlert';
 
-import { useNavigate } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 
 
@@ -15,21 +14,19 @@ import 'primeicons/primeicons.css';
 import './UserTable.css';
 
 const UserTable = () => {
+    const [sortField, setSortField] = useState(null);
+    const [sortOrder, setSortOrder] = useState(null);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [first, setFirst] = useState(0); // Initialize first
     const [rows, setRows] = useState(10); // Default rows per page
     const [totalRecords, setTotalRecords] = useState(0);
-    const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchUsers();
-    }, []); // Fetch users on component mount
 
-    const fetchUsers = (e = { first: 0, rows: 10 }) => {
-        const { first, rows } = e;
-        fetch(`http://localhost:8888/api/getUsers.php?offset=${first}&limit=${rows}`)
+    const fetchUsers = (e = { first: 0, rows: 10, sortField, sortOrder }) => {
+        const { first, rows, sortField, sortOrder } = e;
+        fetch(`http://localhost:8888/api/getUsers.php?offset=${first}&limit=${rows}&sortField=${sortField}&sortOrder=${sortOrder}`)
             .then(response => response.json())
             .then(data => {
                 setUsers(data.users);
@@ -37,6 +34,10 @@ const UserTable = () => {
             })
             .catch(error => console.error('Error fetching users:', error));
     };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     const detailsHandler = (user) => {
         setSelectedUser(user);
@@ -91,13 +92,22 @@ const UserTable = () => {
         );
     }
 
+    const handleSort = async (event) => {
+        const { sortField, sortOrder } = event;
+
+        setSortField(sortField);
+        setSortOrder(sortOrder);
+
+        fetchUsers({ first, rows, sortField, sortOrder });
+    };
+
     return (
         <div className='manage-users'>
             <h1>User Management</h1>
             <CustomAlert alert={alert} onClose={() => setAlert({...alert, visible: false})} />
             <Box sx={{mt:4, width:'77%', margin:'0 auto'}}>
                 <div className='datatable'>
-                    <DataTable className='user-table'
+                    <DataTable
                         value={users}
                         lazy
                         paginator
@@ -107,13 +117,16 @@ const UserTable = () => {
                         onPage={(e) => {
                             setFirst(e.first);
                             setRows(e.rows);
-                            fetchUsers(e);
+                            fetchUsers({ ...e, sortField, sortOrder });
                         }}
+                        onSort={handleSort}
+                        sortField={sortField}
+                        sortOrder={sortOrder}
                         rowsPerPageOptions={[5, 10, 20, 50, 100]}
-                        tableStyle={{ minWidth: '50%' }}>
-                        <Column field='name' header='Name' />
-                        <Column field='email' header='Email' />
-                        <Column field='role' header='Role' />
+                        tableStyle={{ minWidth: '50%' }}
+                    >
+                        <Column field='name' header='Name' sortable filter />
+                        <Column field='email' header='Email' sortable filter />
                         <Column header='Actions' body={actionTemplate} />
                     </DataTable>
                 </div>

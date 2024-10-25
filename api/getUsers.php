@@ -20,8 +20,22 @@
 
   $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
   $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
+  $sortField = isset($_GET['sortField']) ? $_GET['sortField'] : '';
+  $sortOrder = isset($_GET['sortOrder']) ? $_GET['sortOrder'] : 'ASC';
 
-  $sql = "SELECT id, name, email FROM users LIMIT $offset, $limit";
+  // Validate sort order
+  $sortOrder = strtoupper($sortOrder) === 'DESC' ? 'DESC' : 'ASC';
+
+  // Build the SQL query
+  $sql = "SELECT id, name, email FROM users";
+
+  // Add sorting if a sort field is provided
+  if (!empty($sortField)) {
+      $sql .= " ORDER BY $sortField $sortOrder";
+  }
+
+  $sql .= " LIMIT $limit OFFSET $offset";
+
   $result = $conn->query($sql);
 
   $users = array();

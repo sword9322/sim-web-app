@@ -43,7 +43,11 @@ function UserForm() {
                 body: JSON.stringify(formData),
             });
             if (response.ok) {
-                setAlert('User data saved successfully');
+                setAlert({
+                    visible: true,
+                    type: 'success',
+                    msg: 'User data saved successfully'
+                });
                 setFormData({
                     name: '',
                     email: '',
@@ -54,7 +58,11 @@ function UserForm() {
                     dateOfBirth: '',
                 });
             } else {
-                setAlert('Failed to save user data');
+                setAlert({
+                    visible: true,
+                    type: 'error',
+                    msg: 'Failed to save user data'
+                });
             }
         } catch (error) {
             console.error('Error saving user data:', error);
