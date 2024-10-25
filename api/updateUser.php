@@ -3,37 +3,64 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Allow-Headers: Content-Type");
 
+require_once 'PDOConnection.php';
+
+$pdo = getPDOconnection();
+
+if ($pdo === false) {
+    echo json_encode(['success' => false, 'message' => 'Connection failed']);
+    exit;
+}
+
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-if (is_null($data) || !isset($data['name']) || !isset($data['email']) || !isset($data['password'])) {
-    die(json_encode(['success' => false, 'message' => 'Invalid input']));
+if (is_null($data)) {
+    echo json_encode(['success' => false, 'message' => 'Invalid JSON input']);
+    exit;
 }
 
+$id = $data['id'];
 $name = $data['name'];
 $email = $data['email'];
-$password = $data['password'];
+$password = isset($data['password']) ? $data['password'] : null;
+$role = $data['role'];
+$address = $data['address'];
+$city = $data['city'];
+$date_of_birth = $data['date_of_birth'];
 
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "webapp";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die(json_encode(['success' => false, 'message' => 'Connection failed: ' . $conn->connect_error]));
+if (is_null($password)) {
+    echo json_encode(['success' => false, 'message' => 'Password is required']);
+    exit;
 }
 
-// Assuming you have a way to identify the current user, e.g., session or token
-$userId = 1; // Replace with actual user ID
+// Build the SQL query dynamically
+$sql = "UPDATE users SET name = :name, email = :email, role = :role, address = :address, city = :city, date_of_birth = :date_of_birth";
+$params = [
+    ':name' => $name,
+    ':email' => $email,
+    ':role' => $role,
+    ':address' => $address,
+    ':city' => $city,
+    ':date_of_birth' => $date_of_birth,
+    ':id' => $id
+];
 
-$sql = "UPDATE users SET name = '$name', email = '$email', password = '$password' WHERE id = $userId";
-if ($conn->query($sql) === TRUE) {
+if (!is_null($password)) {
+    $sql .= ", password = :password";
+    $params[':password'] = $password;
+}
+
+$sql .= " WHERE id = :id";
+
+try {
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
     echo json_encode(['success' => true]);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Error updating user: ' . $conn->error]);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Error updating user: ' . $e->getMessage()]);
 }
 
-$conn->close();
+$pdo = null;
 ?>

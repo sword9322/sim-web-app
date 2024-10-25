@@ -1,34 +1,42 @@
 <?php
+require_once __DIR__ . '/PDOConnection.php';
 
-require_once 'PDOConnection.php';
+function findEntity($table, $fields = ["*"], $searchCriteria = [] ){  
+    try {
+        $pdo = getPDOconnection();
 
-function findEntity($table, $fields = ["*"], $searchCriteria = []) {
-    $pdo = getPDOconnection();
+        if ($pdo === false) {
+            die(json_encode(['success' => false, 'message' => 'Connection failed']));
+        }
 
-    $commaDelimitedFields = implode(", ", $fields);
-    $sql = "SELECT $commaDelimitedFields FROM $table WHERE 1=1";
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        $commaDelimitedFields = implode(",", $fields);
+        $sql = "SELECT $commaDelimitedFields FROM $table where (true) ";
+        
+        foreach($searchCriteria as $key => [$comparator, $value, $type]){
+            $sql .= " and $key $comparator :$key";
+        }
 
-    foreach ($searchCriteria as $criterion) {
-        list($key, $comparator, $value) = $criterion;
-        $sql .= " AND $key $comparator :$key";
-    }
+        $stmt = $pdo->prepare($sql);
+        foreach($searchCriteria as $key => [$comparator, $value, $type]){
+            $stmt->bindParam(":$key", $value, $type);
+        }
 
-    $stmt = $pdo->prepare($sql);
-    foreach ($searchCriteria as $criterion) {
-        list($key, $comparator, $value) = $criterion;
-        $stmt->bindValue(":$key", $value);
-    }
+        if ($stmt->execute()) {
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return [
+                "result" => "SUCCESS",
+                "message" => "Entities fetched successfully",
+                "statusCode" => 200,
+                "data" => $data
+            ];
+        } else {
+            return ["result" => "ERROR", "message" => "Could not fetch entities", "statusCode" => 500];
+        }
 
-    if ($stmt->execute()) {
-        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return [
-            "result" => "SUCCESS",
-            "message" => "Entities fetched successfully",
-            "statusCode" => 200,
-            "data" => $data
-        ];
-    } else {
-        return ["result" => "ERROR", "message" => "Could not fetch entities", "statusCode" => 500];
+    } catch (PDOException $e) {
+        return ["result" => "ERROR", "message" => "Database error: " . $e->getMessage(), "statusCode" => 500];
     }
 }
 ?>
