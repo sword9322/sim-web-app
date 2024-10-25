@@ -3,7 +3,7 @@ import './MyProfile.css'; // Import the CSS file
 
 
 function MyProfile() {
-    const [user, setUser] = useState({ name: '', email: '', password: '' });
+    const [user, setUser] = useState({ name: '', email: '', password: '', role: '', address: '', city: '', date_of_birth: '' });
     const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
@@ -61,6 +61,22 @@ function MyProfile() {
                         <label>Password:</label>
                         <input type="password" name="password" value={user.password} onChange={handleChange} />
                     </div>
+                    <div>
+                        <label>Role:</label>
+                        <input type="text" name="role" value={user.role} onChange={handleChange} />
+                    </div>
+                    <div>
+                        <label>Address:</label>
+                        <input type="text" name="address" value={user.address} onChange={handleChange} />
+                    </div>
+                    <div>
+                        <label>City:</label>
+                        <input type="text" name="city" value={user.city} onChange={handleChange} />
+                    </div>
+                    <div>
+                        <label>Date of Birth:</label>
+                        <input type="date" name="date_of_birth" value={user.date_of_birth} onChange={handleChange} />
+                    </div>
                     <button type="submit">Save</button>
                     <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
                 </form>
@@ -68,6 +84,10 @@ function MyProfile() {
                 <div>
                     <p>Name: {user.name}</p>
                     <p>Email: {user.email}</p>
+                    <p>Role: {user.role}</p>
+                    <p>Address: {user.address}</p>
+                    <p>City: {user.city}</p>
+                    <p>Date of Birth: {user.date_of_birth}</p>
                     <button onClick={() => setIsEditing(true)}>Edit</button>
                 </div>
             )}

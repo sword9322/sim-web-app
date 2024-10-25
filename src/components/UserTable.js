@@ -29,8 +29,8 @@ const UserTable = () => {
         fetch(`http://localhost:8888/api/getUsers.php?offset=${first}&limit=${rows}&sortField=${sortField}&sortOrder=${sortOrder}`)
             .then(response => response.json())
             .then(data => {
-                setUsers(data.users);
-                setTotalRecords(data.total);
+                console.log('Fetched data:', data); // Debug: Check the structure of the data
+                setUsers(data.users); // Ensure data.users is an array
             })
             .catch(error => console.error('Error fetching users:', error));
     };
@@ -40,8 +40,17 @@ const UserTable = () => {
     }, []);
 
     const detailsHandler = (user) => {
-        setSelectedUser(user);
-        setIsDialogOpen(true);
+        fetch(`http://localhost:8888/api/getUser.php?id=${user.id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    setSelectedUser(data.user);
+                    setIsDialogOpen(true);
+                } else {
+                    console.error('Error fetching user details:', data.message);
+                }
+            })
+            .catch(error => console.error('Error fetching user details:', error));
     };
 
     const [alert, setAlert] = useState({
@@ -140,6 +149,9 @@ const UserTable = () => {
                             <Typography>Name: {selectedUser.name}</Typography>
                             <Typography>Email: {selectedUser.email}</Typography>
                             <Typography>Role: {selectedUser.role}</Typography>
+                            <Typography>Address: {selectedUser.address}</Typography>
+                            <Typography>City: {selectedUser.city}</Typography>
+                            <Typography>Date of Birth: {selectedUser.date_of_birth}</Typography>
                         </div>
                     )}
                 </DialogContent>

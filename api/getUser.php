@@ -11,15 +11,19 @@ if ($pdo === false) {
 }
 
 // Assuming you have a way to identify the current user, e.g., session or token
-$userId = 1; // Replace with actual user ID
+$userId = $_GET['id'] ?? null;
 
-$sql = "SELECT name, email, password FROM users WHERE id = ?";
+if (!$userId) {
+    die(json_encode(['success' => false, 'message' => 'User ID not provided']));
+}
+
+$sql = "SELECT id, name, email, role, address, city, date_of_birth FROM users WHERE id = ?";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$userId]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user) {
-    echo json_encode($user);
+    echo json_encode(['success' => true, 'user' => $user]);
 } else {
     echo json_encode(['success' => false, 'message' => 'User not found']);
 }
