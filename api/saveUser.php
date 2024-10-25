@@ -26,29 +26,20 @@
     $city = $data['city'];
     $dateOfBirth = $data['dateOfBirth'];
 
-    $servername = "localhost";
-    $username = "root";
-    $password = "root";
-    $dbname = "webapp";
+    require_once 'PDOConnection.php';
 
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+    $pdo = getPDOconnection();
 
     if($name && $email && $password && $role && $address && $city && $dateOfBirth){
-        $sql = "INSERT INTO users (name, email, password, role, address, city, date_of_birth) VALUES ('$name', '$email', '$password', '$role', '$address', '$city', '$dateOfBirth')";
-        if(mysqli_query($conn, $sql)){
+        $sql = "INSERT INTO users (name, email, password, role, address, city, date_of_birth) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        if ($stmt->execute([$name, $email, $password, $role, $address, $city, $dateOfBirth])) {
             echo "User data saved successfully";
         } else {
-            echo "Failed to save user data: " . mysqli_error($conn);
+            echo "Failed to save user data";
         }
     } else {
         echo "All fields are required";
     }
 
-    $conn->close();
 ?>

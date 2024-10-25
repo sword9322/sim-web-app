@@ -2,20 +2,17 @@
   header("Access-Control-Allow-Origin: *");
   header("Content-Type: application/json; charset=UTF-8");
 
-  $servername = "localhost";
-  $username = "root";
-  $password = "root";
-  $dbname = "webapp";
+  require_once 'PDOConnection.php';
 
-  $conn = new mysqli($servername, $username, $password, $dbname);
+  $pdo = getPDOconnection();
 
-  if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
+  if ($pdo === false) {
+      die("Connection failed: " . $pdo->connect_error);
   }
 
   $sql = "SELECT COUNT(*) as total FROM users";
-  $totalResult = $conn->query($sql);
-  $totalRow = $totalResult->fetch_assoc();
+  $totalResult = $pdo->query($sql);
+  $totalRow = $totalResult->fetch(PDO::FETCH_ASSOC);
   $total = $totalRow['total'];
 
   $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
@@ -36,16 +33,15 @@
 
   $sql .= " LIMIT $limit OFFSET $offset";
 
-  $result = $conn->query($sql);
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute();
 
   $users = array();
-  if ($result->num_rows > 0) {
-      while($row = $result->fetch_assoc()) {
-          $users[] = $row;
-      }
+  while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+      $users[] = $row;
   }
 
   echo json_encode(['users' => $users, 'total' => $total]);
 
-  $conn->close();
+  $pdo = null;
   ?>
