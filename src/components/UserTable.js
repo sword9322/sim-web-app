@@ -141,22 +141,22 @@ const UserTable = () => {
                 </div>
             </Box>
 
-            <Dialog open={isDialogOpen} onClose={closeDialog}>
-                <DialogTitle>User Details</DialogTitle>
-                <DialogContent>
+            <Dialog open={isDialogOpen} onClose={closeDialog} maxWidth="md" fullWidth>
+                <DialogTitle className="dialog-title">User Details</DialogTitle>
+                <DialogContent className="dialog-content">
                     {selectedUser && (
-                        <div>
-                            <Typography>Name: {selectedUser.name}</Typography>
-                            <Typography>Email: {selectedUser.email}</Typography>
-                            <Typography>Role: {selectedUser.role}</Typography>
-                            <Typography>Address: {selectedUser.address}</Typography>
-                            <Typography>City: {selectedUser.city}</Typography>
-                            <Typography>Date of Birth: {selectedUser.date_of_birth}</Typography>
-                        </div>
+                        <Box sx={{ padding: 3 }}>
+                            <Typography variant="h5" gutterBottom>Name: {selectedUser.name}</Typography>
+                            <Typography variant="body1" gutterBottom>Email: {selectedUser.email}</Typography>
+                            <Typography variant="body1" gutterBottom>Role: {selectedUser.role}</Typography>
+                            <Typography variant="body1" gutterBottom>Address: {selectedUser.address}</Typography>
+                            <Typography variant="body1" gutterBottom>City: {selectedUser.city}</Typography>
+                            <Typography variant="body1" gutterBottom>Date of Birth: {selectedUser.date_of_birth}</Typography>
+                        </Box>
                     )}
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={closeDialog} color="primary">Close</Button>
+                <DialogActions className="dialog-actions">
+                    <Button onClick={closeDialog} color="primary" variant="contained">Close</Button>
                 </DialogActions>
             </Dialog>
         </div>

@@ -51,3 +51,24 @@
 .p-button-info, .p-button-warning, .p-button-danger {
     color: #ecf0f1; /* Light text color */
 }
+
+.dialog-content {
+    background-color: #f5f5f5;
+    color: #34495e;
+    font-family: 'Roboto', sans-serif;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dialog-title {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.dialog-actions {
+    justify-content: center;
+    padding: 20px;
+}
