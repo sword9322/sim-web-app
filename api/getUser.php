@@ -10,14 +10,14 @@ if ($pdo === false) {
     die(json_encode(['success' => false, 'message' => 'Connection failed']));
 }
 
-// Assuming you have a way to identify the current user, e.g., session or token
 $userId = $_GET['id'] ?? null;
 
 if (!$userId) {
     die(json_encode(['success' => false, 'message' => 'User ID not provided']));
 }
 
-$sql = "SELECT id, name, email, role, address, city, date_of_birth FROM users WHERE id = ?";
+// Include password in the query
+$sql = "SELECT id, name, email, password, role, address, city, date_of_birth FROM users WHERE id = ?";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$userId]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -18,6 +18,7 @@ const UserTable = () => {
     const [sortOrder, setSortOrder] = useState(null);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [initialFormData, setInitialFormData] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [first, setFirst] = useState(0); // Initialize first
@@ -51,6 +52,7 @@ const UserTable = () => {
             .then(data => {
                 if (data.success) {
                     setSelectedUser(data.user);
+                    setInitialFormData(data.user); // Set initial form data
                     setIsEditDialogOpen(true);
                 } else {
                     console.error('Error fetching user details:', data.message);
@@ -140,11 +142,9 @@ const UserTable = () => {
             date_of_birth: selectedUser.date_of_birth
         };
 
-        // Include password only if it has been changed
         if (selectedUser.password) {
             userData.password = selectedUser.password;
-        }
-        else {
+        } else {
             userData.password = "";
         }
 
@@ -163,14 +163,18 @@ const UserTable = () => {
         })
         .then(data => {
             if (data.success) {
-                // Update the user list or notify the user of success
                 setUsers(users.map(user => user.id === selectedUser.id ? selectedUser : user));
                 closeEditDialog();
             } else {
-                console.error('Error updating user1:', data.message);
+                console.error('Error updating user:', data.message);
             }
         })
-        .catch(error => console.error('Error updating user:3', error));
+        .catch(error => console.error('Error updating user:', error));
+    };
+
+    const cancelEdit = () => {
+        setSelectedUser(initialFormData); // Reset to initial data
+        closeEditDialog();
     };
 
     return (
@@ -213,52 +217,78 @@ const UserTable = () => {
                                 fullWidth
                                 label="Name"
                                 value={selectedUser.name}
-                                onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })}
                                 variant="outlined"
                                 margin="normal"
+                                InputProps={{
+                                    readOnly: true,
+                                }}
                             />
                             <TextField
                                 fullWidth
                                 label="Email"
                                 value={selectedUser.email}
-                                onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })}
                                 variant="outlined"
                                 margin="normal"
+                                InputProps={{
+                                    readOnly: true,
+                                }}
                             />
                             <TextField
                                 fullWidth
                                 label="Role"
                                 value={selectedUser.role}
-                                onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}
                                 variant="outlined"
                                 margin="normal"
+                                InputProps={{
+                                    readOnly: true,
+                                    classes: {
+                                        input: 'non-selectable', // Apply the CSS class
+                                    },
+                                }}
                             />
                             <TextField
                                 fullWidth
                                 label="Address"
                                 value={selectedUser.address}
-                                onChange={(e) => setSelectedUser({ ...selectedUser, address: e.target.value })}
                                 variant="outlined"
                                 margin="normal"
+                                InputProps={{
+                                    readOnly: true,
+                                }}
                             />
                             <TextField
                                 fullWidth
                                 label="City"
                                 value={selectedUser.city}
-                                onChange={(e) => setSelectedUser({ ...selectedUser, city: e.target.value })}
                                 variant="outlined"
                                 margin="normal"
+                                InputProps={{
+                                    readOnly: true,
+                                }}
                             />
                             <TextField
                                 fullWidth
                                 label="Date of Birth"
                                 type="date"
                                 value={selectedUser.date_of_birth}
-                                onChange={(e) => setSelectedUser({ ...selectedUser, date_of_birth: e.target.value })}
                                 variant="outlined"
                                 margin="normal"
                                 InputLabelProps={{
                                     shrink: true,
+                                }}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                            />
+                            <TextField
+                                fullWidth
+                                label="Password"
+                                type="password"
+                                value={selectedUser.password}
+                                variant="outlined"
+                                margin="normal"
+                                InputProps={{
+                                    readOnly: true,
                                 }}
                             />
                         </Box>
@@ -294,9 +324,14 @@ const UserTable = () => {
                                 fullWidth
                                 label="Role"
                                 value={selectedUser.role}
-                                onChange={(e) => setSelectedUser({ ...selectedUser, role: e.target.value })}
                                 variant="outlined"
                                 margin="normal"
+                                InputProps={{
+                                    readOnly: true,
+                                    classes: {
+                                        input: 'non-selectable', // Apply the CSS class
+                                    },
+                                }}
                             />
                             <TextField
                                 fullWidth
@@ -326,12 +361,20 @@ const UserTable = () => {
                                     shrink: true,
                                 }}
                             />
+                            <TextField
+                                fullWidth
+                                label="Password"
+                                value={selectedUser.password}
+                                onChange={(e) => setSelectedUser({ ...selectedUser, password: e.target.value })}
+                                variant="outlined"
+                                margin="normal"
+                            />
                         </Box>
                     )}
                 </DialogContent>
                 <DialogActions className="dialog-actions">
                     <Button onClick={submitEdit} color="primary" variant="contained">Save</Button>
-                    <Button onClick={closeEditDialog} color="primary" variant="contained">Close</Button>
+                    <Button onClick={cancelEdit} color="primary" variant="contained">Cancel</Button>
                 </DialogActions>
             </Dialog>
         </div>
