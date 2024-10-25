@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './UserForm.css';
-import { TextField, Button, Grid, Box, Typography, MenuItem } from '@mui/material';
+import { TextField, Button, Grid, Box, MenuItem } from '@mui/material';
 import CustomAlert from './CustomAlert'; // Import the CustomAlert component
 
 function UserForm() {

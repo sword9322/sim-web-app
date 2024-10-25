@@ -13,7 +13,15 @@
       die("Connection failed: " . $conn->connect_error);
   }
 
-  $sql = "SELECT id, name, email FROM users";
+  $sql = "SELECT COUNT(*) as total FROM users";
+  $totalResult = $conn->query($sql);
+  $totalRow = $totalResult->fetch_assoc();
+  $total = $totalRow['total'];
+
+  $offset = isset($_GET['offset']) ? intval($_GET['offset']) : 0;
+  $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
+
+  $sql = "SELECT id, name, email FROM users LIMIT $offset, $limit";
   $result = $conn->query($sql);
 
   $users = array();
@@ -23,7 +31,7 @@
       }
   }
 
-  echo json_encode($users);
+  echo json_encode(['users' => $users, 'total' => $total]);
 
   $conn->close();
   ?>

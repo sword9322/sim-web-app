@@ -18,18 +18,25 @@ const UserTable = () => {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [first, setFirst] = useState(0); // Initialize first
+    const [rows, setRows] = useState(10); // Default rows per page
+    const [totalRecords, setTotalRecords] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch users from the backend
-        fetch('http://localhost:8888/api/getUsers.php') // Adjust the URL to your endpoint
+        fetchUsers();
+    }, []); // Fetch users on component mount
+
+    const fetchUsers = (e = { first: 0, rows: 10 }) => {
+        const { first, rows } = e;
+        fetch(`http://localhost:8888/api/getUsers.php?offset=${first}&limit=${rows}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Debug: Check if 'role' is present in the data
-                setUsers(data);
+                setUsers(data.users);
+                setTotalRecords(data.total);
             })
             .catch(error => console.error('Error fetching users:', error));
-    }, []); // Add an empty dependency array to run this effect only once
+    };
 
     const detailsHandler = (user) => {
         setSelectedUser(user);
@@ -52,9 +59,8 @@ const UserTable = () => {
     }
 
     const deleteHandler = (user) => {
-        // Delete user from the backend
         console.log('Delete ID:', user.id);
-        fetch('http://localhost:8888/api/deleteUser.php', { // Adjust the URL to your endpoint
+        fetch('http://localhost:8888/api/deleteUser.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -71,8 +77,9 @@ const UserTable = () => {
         })
         .catch(error => console.error('Error deleting user:', error));
     }
+
     const actionTemplate = (rowData) => {
-       return (
+        return (
             <div className='p-buttonset'>
                 <Button className='p-button-info' icon="pi pi-eye" onClick={() => detailsHandler(rowData)} />
                 <Button className='p-button-warning' icon="pi pi-pencil" onClick={() => editHandler(rowData)} />
@@ -84,39 +91,51 @@ const UserTable = () => {
         );
     }
 
-  return (
-    <div className='manage-users'>
-        <h1>User Management</h1>
-        <CustomAlert alert={alert} onClose={() => setAlert({...alert, visible: false})} />
-        <Box sx={{mt:4, width:'77%', margin:'0 auto'}}>
-            <div className='datatable'>
-                <DataTable className='user-table' value={users} tableStyle={{ minWidth: '50%' }}>
-                    <Column field='name' header='Name' />
-                    <Column field='email' header='Email' />
-                    <Column field='role' header='Role' />  // Ensure this column is present
-                    <Column header='Actions' body={actionTemplate} />
-                </DataTable>
-            </div>
-        </Box>
+    return (
+        <div className='manage-users'>
+            <h1>User Management</h1>
+            <CustomAlert alert={alert} onClose={() => setAlert({...alert, visible: false})} />
+            <Box sx={{mt:4, width:'77%', margin:'0 auto'}}>
+                <div className='datatable'>
+                    <DataTable className='user-table'
+                        value={users}
+                        lazy
+                        paginator
+                        first={first}
+                        rows={rows}
+                        totalRecords={totalRecords}
+                        onPage={(e) => {
+                            setFirst(e.first);
+                            setRows(e.rows);
+                            fetchUsers(e);
+                        }}
+                        rowsPerPageOptions={[5, 10, 20, 50, 100]}
+                        tableStyle={{ minWidth: '50%' }}>
+                        <Column field='name' header='Name' />
+                        <Column field='email' header='Email' />
+                        <Column field='role' header='Role' />
+                        <Column header='Actions' body={actionTemplate} />
+                    </DataTable>
+                </div>
+            </Box>
 
-        <Dialog open={isDialogOpen} onClose={closeDialog}>
-            <DialogTitle>User Details</DialogTitle>
-            <DialogContent>
-                {selectedUser && (
-                    <div>
-                        <Typography>Name: {selectedUser.name}</Typography>
-                        <Typography>Email: {selectedUser.email}</Typography>
-                        <Typography>Role: {selectedUser.role}</Typography> {/* Add role here if needed */}
-                        {/* Add more fields as needed */}
-                    </div>
-                )}
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={closeDialog} color="primary">Close</Button>
-            </DialogActions>
-        </Dialog>
-    </div>
-  )
+            <Dialog open={isDialogOpen} onClose={closeDialog}>
+                <DialogTitle>User Details</DialogTitle>
+                <DialogContent>
+                    {selectedUser && (
+                        <div>
+                            <Typography>Name: {selectedUser.name}</Typography>
+                            <Typography>Email: {selectedUser.email}</Typography>
+                            <Typography>Role: {selectedUser.role}</Typography>
+                        </div>
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeDialog} color="primary">Close</Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    )
 }
 
 export default UserTable
