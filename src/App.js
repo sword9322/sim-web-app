@@ -28,7 +28,6 @@ function App() {
               <Route path='/' element={<Dashboard/>}/>
               <Route path='/about' element={<About/>}/>
               <Route path='/myprofile' element={<MyProfile/>}/>
-              <Route path='/userForm' element={<UserForm/>}/>
               <Route path='/userTable' element={<UserTable/>}/>
             </Routes>
           </Content>

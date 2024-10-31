@@ -24,7 +24,7 @@
   $sortOrder = strtoupper($sortOrder) === 'DESC' ? 'DESC' : 'ASC';
 
   // Build the SQL query
-  $sql = "SELECT id, name, email FROM users";
+  $sql = "SELECT id, name, email, role, date_of_birth FROM users";
 
   // Add sorting if a sort field is provided
   if (!empty($sortField)) {
@@ -40,7 +40,7 @@
   while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
       $users[] = $row;
   }
-
+  
   echo json_encode(['users' => $users, 'total' => $total]);
 
   $pdo = null;

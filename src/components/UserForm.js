@@ -3,7 +3,7 @@ import './UserForm.css';
 import { TextField, Button, Grid, Box, MenuItem } from '@mui/material';
 import CustomAlert from './CustomAlert'; // Import the CustomAlert component
 
-function UserForm() {
+function UserForm({ onClose, onUserAdded }) { // Accept onClose and onUserAdded as props
 
     const [formData, setFormData] = useState({
         name: '',
@@ -57,6 +57,10 @@ function UserForm() {
                     city: '',
                     dateOfBirth: '',
                 });
+                setTimeout(() => {
+                    onClose(); // Close the dialog after successful submission
+                    onUserAdded(); // Refresh the user list
+                }, 1000);
             } else {
                 setAlert({
                     visible: true,
@@ -155,6 +159,11 @@ function UserForm() {
                         <Grid item xs={12}>
                             <Button type="submit" variant="contained" color="primary" fullWidth>
                                 Save User
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button onClick={onClose} variant="contained" color="secondary" fullWidth>
+                                Close
                             </Button>
                         </Grid>
                     </Grid>

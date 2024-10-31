@@ -12,7 +12,7 @@ import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import './UserTable.css';
-
+import UserForm from './UserForm';
 const UserTable = () => {
     const [sortField, setSortField] = useState(null);
     const [sortOrder, setSortOrder] = useState(null);
@@ -21,18 +21,22 @@ const UserTable = () => {
     const [initialFormData, setInitialFormData] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-    const [first, setFirst] = useState(0); // Initialize first
-    const [rows, setRows] = useState(10); // Default rows per page
+    const [first, setFirst] = useState(0); 
+    const [rows, setRows] = useState(10); 
     const [totalRecords, setTotalRecords] = useState(0);
+    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
+    const [isNewUserDialogOpen, setIsNewUserDialogOpen] = useState(false);
 
 
-    const fetchUsers = (e = { first: 0, rows: 10, sortField, sortOrder }) => {
+    const fetchUsers = (e = { first: 0, rows, sortField, sortOrder }) => {
         const { first, rows, sortField, sortOrder } = e;
+        const filter = e.filter;
         fetch(`http://localhost:8888/api/getUsers.php?offset=${first}&limit=${rows}&sortField=${sortField}&sortOrder=${sortOrder}`)
             .then(response => response.json())
             .then(data => {
-                console.log('Fetched data:', data); // Debug: Check the structure of the data
-                setUsers(data.users); // Ensure data.users is an array
+                setUsers(data.users);
+                setTotalRecords(data.totalRecords); // Ensure this is set
             })
             .catch(error => console.error('Error fetching users:', error));
     };
@@ -52,7 +56,7 @@ const UserTable = () => {
             .then(data => {
                 if (data.success) {
                     setSelectedUser(data.user);
-                    setInitialFormData(data.user); // Set initial form data
+                    setInitialFormData(data.user); 
                     setIsEditDialogOpen(true);
                 } else {
                     console.error('Error fetching user details:', data.message);
@@ -111,10 +115,7 @@ const UserTable = () => {
             <div className='p-buttonset'>
                 <Button className='p-button-info' icon="pi pi-eye" onClick={() => detailsHandler(rowData)} />
                 <Button className='p-button-warning' icon="pi pi-pencil" onClick={() => editDialogHandler(rowData)} />
-                <Button className='p-button-danger' icon="pi pi-trash" onClick={() => {
-                    deleteHandler(rowData);
-                    setAlert(prevAlert => ({...prevAlert, visible: true, type: 'success', msg: 'User deleted successfully'}));
-                }} />
+                <Button className='p-button-danger' icon="pi pi-trash" onClick={() => confirmDeleteHandler(rowData)} />
             </div>
         );
     }
@@ -173,8 +174,25 @@ const UserTable = () => {
     };
 
     const cancelEdit = () => {
-        setSelectedUser(initialFormData); // Reset to initial data
+        setSelectedUser(initialFormData); 
         closeEditDialog();
+    };
+
+    const confirmDeleteHandler = (user) => {
+        setUserToDelete(user);
+        setIsConfirmDialogOpen(true);
+    };
+
+    const handleDeleteConfirmation = () => {
+        if (!userToDelete) return;
+        deleteHandler(userToDelete);
+        setIsConfirmDialogOpen(false);
+        fetchUsers();
+    };
+
+    const handleFilter = (e) => {
+        const value = e.target.value;
+        fetchUsers({ first, rows, sortField, sortOrder, filter: value });
     };
 
     return (
@@ -183,6 +201,14 @@ const UserTable = () => {
             <CustomAlert alert={alert} onClose={() => setAlert({...alert, visible: false})} />
             <Box sx={{mt:4, width:'77%', margin:'0 auto'}}>
                 <div className='datatable'>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => setIsNewUserDialogOpen(true)}
+                        style={{ marginBottom: '10px' }} /* Reduced margin */
+                    >
+                        Add New User
+                    </Button>
                     <DataTable
                         value={users}
                         lazy
@@ -193,16 +219,25 @@ const UserTable = () => {
                         onPage={(e) => {
                             setFirst(e.first);
                             setRows(e.rows);
-                            fetchUsers({ ...e, sortField, sortOrder });
+                            fetchUsers({ first: e.first, rows: e.rows, sortField, sortOrder });
                         }}
-                        onSort={handleSort}
+                        onFilter={handleFilter}
+
                         sortField={sortField}
                         sortOrder={sortOrder}
+
+                        onSort={(e) => {
+                            setSortField(e.sortField);
+                            setSortOrder(e.sortOrder);
+                            fetchUsers({ first, rows, sortField: e.sortField, sortOrder: e.sortOrder });
+                        }}
                         rowsPerPageOptions={[5, 10, 20, 50, 100]}
                         tableStyle={{ minWidth: '50%' }}
                     >
                         <Column field='name' header='Name' sortable filter />
                         <Column field='email' header='Email' sortable filter />
+                        <Column field='role' header='Role' sortable filter />
+                        <Column field='date_of_birth' header='Date of Birth' sortable filter />
                         <Column header='Actions' body={actionTemplate} />
                     </DataTable>
                 </div>
@@ -242,7 +277,7 @@ const UserTable = () => {
                                 InputProps={{
                                     readOnly: true,
                                     classes: {
-                                        input: 'non-selectable', // Apply the CSS class
+                                        input: 'non-selectable', 
                                     },
                                 }}
                             />
@@ -329,7 +364,7 @@ const UserTable = () => {
                                 InputProps={{
                                     readOnly: true,
                                     classes: {
-                                        input: 'non-selectable', // Apply the CSS class
+                                        input: 'non-selectable', 
                                     },
                                 }}
                             />
@@ -376,6 +411,24 @@ const UserTable = () => {
                     <Button onClick={submitEdit} color="primary" variant="contained">Save</Button>
                     <Button onClick={cancelEdit} color="primary" variant="contained">Cancel</Button>
                 </DialogActions>
+            </Dialog>
+
+            <Dialog open={isConfirmDialogOpen} onClose={() => setIsConfirmDialogOpen(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <Typography>Are you sure you want to delete this user?</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setIsConfirmDialogOpen(false)} color="primary" variant="contained">Cancel</Button>
+                    <Button onClick={handleDeleteConfirmation} color="secondary" variant="contained">Delete</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={isNewUserDialogOpen} onClose={() => setIsNewUserDialogOpen(false)} maxWidth="sm" fullWidth>
+                
+                <DialogContent>
+                    <UserForm onClose={() => setIsNewUserDialogOpen(false)} onUserAdded={fetchUsers} />
+                </DialogContent>
             </Dialog>
         </div>
     )

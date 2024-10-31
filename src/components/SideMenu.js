@@ -29,12 +29,6 @@ function SideMenu({ onToggleMenu }) {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/userForm" className={({isActive}) => isActive ? 'active' : ''}>
-                            <FontAwesomeIcon icon={faUser} className='icon'/>
-                            User Form
-                        </NavLink>
-                    </li>
-                    <li>
                         <NavLink to="/userTable" className={({isActive}) => isActive ? 'active' : ''}>
                             <FontAwesomeIcon icon={faUser} className='icon'/>
                             Manage Users
